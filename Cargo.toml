@@ -1,0 +1,26 @@
+[package]
+name = "rust-dev-mcp"
+version = "0.1.0"
+edition = "2024"
+description = "MCP server for rust-analyzer integration"
+license = "MIT"
+
+[[bin]]
+name = "rust-dev-mcp"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1.0"
+dunce = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.0", features = ["full"] }
+url = "2.5"
+env_logger = "0.11"
+log = "0.4"
+which = "6.0"
+
+[profile.release]
+lto = true
+codegen-units = 1
+panic = "abort"
