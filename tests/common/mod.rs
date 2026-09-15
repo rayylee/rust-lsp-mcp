@@ -201,6 +201,29 @@ pub fn wait_until_hover_ready(
     }
 }
 
+/// Calls `tool` with `args` until `ready(result)` is true, then returns that
+/// result. Some tools return null or an empty list while rust-analyzer's index
+/// is still warming up even after hover succeeds, so poll rather than fail fast.
+pub fn retry_tool_until(
+    client: &mut Client,
+    tool: &str,
+    args: Value,
+    ready: impl Fn(&Value) -> bool,
+) -> Value {
+    let deadline = Instant::now() + Duration::from_secs(30);
+    loop {
+        let result = client.call_tool(tool, args.clone());
+        if ready(&result) {
+            return result;
+        }
+        assert!(
+            Instant::now() < deadline,
+            "{tool} never became ready; last result: {result}"
+        );
+        std::thread::sleep(Duration::from_millis(500));
+    }
+}
+
 pub fn rust_analyzer_available() -> bool {
     which::which("rust-analyzer").is_ok()
         || std::env::var_os("HOME")

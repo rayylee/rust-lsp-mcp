@@ -2,7 +2,7 @@
 
 mod common;
 
-use common::{pos_after, pos_of, Client};
+use common::{pos_after, pos_of, retry_tool_until, Client};
 use serde_json::json;
 
 const LIB: &str = "src/lib.rs";
@@ -135,11 +135,14 @@ fn completion_signature_help_and_inlay_hints_work() {
     let (mut client, source) = spawn_simple();
     wait_simple_ready(&mut client, &source);
 
-    // Completion right after `Point::`.
+    // Completion right after `Point::`. Completion can return null or an empty
+    // list while rust-analyzer's completion index is still warming up, so poll.
     let (line, character) = pos_after(&source, "Point::");
-    let completion = client.call_tool(
+    let completion = retry_tool_until(
+        &mut client,
         "completion",
         json!({ "file_path": LIB, "line": line, "character": character }),
+        |v| v["items"].as_array().is_some_and(|a| !a.is_empty()),
     );
     let labels: Vec<&str> = completion["items"]
         .as_array()
@@ -153,9 +156,11 @@ fn completion_signature_help_and_inlay_hints_work() {
     // marker here: the bare string "add(" also matches the definition line.
     let (sig_line, sig_char) = pos_of(&source, "add(2, 3)");
     let sig_char = sig_char + "add(".len() as u32;
-    let signature = client.call_tool(
+    let signature = retry_tool_until(
+        &mut client,
         "signature_help",
         json!({ "file_path": LIB, "line": sig_line, "character": sig_char }),
+        |v| !v.is_null(),
     );
     assert!(
         signature.to_string().contains("fn add(a: i32, b: i32) -> i32"),
@@ -164,9 +169,11 @@ fn completion_signature_help_and_inlay_hints_work() {
 
     // Inlay hints for `let value = 42;`.
     let (hint_line, _) = pos_of(&source, "let value = 42;");
-    let hints = client.call_tool(
+    let hints = retry_tool_until(
+        &mut client,
         "inlay_hints",
         json!({ "file_path": LIB, "start_line": hint_line, "end_line": hint_line }),
+        |v| v.as_array().is_some_and(|a| !a.is_empty()),
     );
     assert!(hints.to_string().contains("i32"), "inlay hints: {hints}");
 }
