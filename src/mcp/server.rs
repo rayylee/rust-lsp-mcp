@@ -98,7 +98,7 @@ impl McpServer {
     // ------------------------------------------------------------------
 
     pub async fn run(&mut self) -> Result<()> {
-        info!("rust-dev-mcp starting");
+        info!("rust-lsp-mcp starting");
 
         let mut reader = BufReader::new(tokio::io::stdin());
         let mut writer = BufWriter::new(tokio::io::stdout());
@@ -199,7 +199,7 @@ impl McpServer {
                 result: json!({
                     "protocolVersion": "2024-11-05",
                     "serverInfo": {
-                        "name": "rust-dev-mcp",
+                        "name": "rust-lsp-mcp",
                         "version": env!("CARGO_PKG_VERSION")
                     },
                     "capabilities": { "tools": {} }

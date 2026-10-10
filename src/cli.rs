@@ -8,7 +8,7 @@ use crate::settings::Settings;
 pub const USAGE: &str = "\
 MCP server bridging AI assistants to rust-analyzer.
 
-Usage: rust-dev-mcp [OPTIONS] [--] [WORKSPACE]
+Usage: rust-lsp-mcp [OPTIONS] [--] [WORKSPACE]
 
 Arguments:
   [WORKSPACE]  Workspace root [default: current directory]

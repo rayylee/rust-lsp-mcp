@@ -13,7 +13,7 @@ use std::{
 fn temp_dir() -> PathBuf {
     static COUNTER: AtomicU64 = AtomicU64::new(0);
     let dir = std::env::temp_dir().join(format!(
-        "rust-dev-mcp-e2e-{}-{}",
+        "rust-lsp-mcp-e2e-{}-{}",
         std::process::id(),
         COUNTER.fetch_add(1, Ordering::Relaxed)
     ));

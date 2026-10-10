@@ -1,6 +1,6 @@
 //! Shared helpers for end-to-end tests.
 //!
-//! These tests drive the compiled `rust-dev-mcp` binary over stdio exactly like
+//! These tests drive the compiled `rust-lsp-mcp` binary over stdio exactly like
 //! a real MCP client: newline-delimited JSON-RPC requests in, responses out.
 //!
 //! Each integration-test binary only uses a subset of these helpers, so silence
@@ -32,18 +32,18 @@ impl Client {
     pub fn spawn(workspace: &Path) -> Self {
         // Keep cargo build artifacts out of the checked-in fixture directories.
         let target_dir = std::env::temp_dir().join(format!(
-            "rust-dev-mcp-e2e-target-{}",
+            "rust-lsp-mcp-e2e-target-{}",
             std::process::id()
         ));
 
-        let mut child = Command::new(env!("CARGO_BIN_EXE_rust-dev-mcp"))
+        let mut child = Command::new(env!("CARGO_BIN_EXE_rust-lsp-mcp"))
             .arg(workspace)
             .env("CARGO_TARGET_DIR", &target_dir)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::null())
             .spawn()
-            .expect("failed to spawn rust-dev-mcp");
+            .expect("failed to spawn rust-lsp-mcp");
 
         let stdin = child.stdin.take().expect("child stdin");
         let stdout = child.stdout.take().expect("child stdout");

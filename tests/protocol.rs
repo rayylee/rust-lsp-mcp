@@ -12,7 +12,7 @@ fn initialize_reports_protocol_version_and_server_info() {
     let response = client.request("initialize", Some(json!({})));
     assert!(response.get("error").is_none(), "initialize failed: {response}");
     assert_eq!(response["result"]["protocolVersion"], "2024-11-05");
-    assert_eq!(response["result"]["serverInfo"]["name"], "rust-dev-mcp");
+    assert_eq!(response["result"]["serverInfo"]["name"], "rust-lsp-mcp");
 }
 
 #[test]

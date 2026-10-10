@@ -1,4 +1,4 @@
-# rust-dev-mcp
+# rust-lsp-mcp
 
 An MCP (Model Context Protocol) server that connects AI assistants to [rust-analyzer](https://rust-analyzer.github.io/). It talks to the MCP client over standard input/output, runs rust-analyzer as a subprocess, and uses LSP (Language Server Protocol) to expose Rust IDE capabilities — hover documentation, go-to-definition, find references, completion, diagnostics, rename, and more — as MCP tools.
 
@@ -68,12 +68,12 @@ rustup component add rust-analyzer
 cargo build --release
 ```
 
-The resulting binary is `target/release/rust-dev-mcp`.
+The resulting binary is `target/release/rust-lsp-mcp`.
 
 ## Usage
 
 ```
-rust-dev-mcp [OPTIONS] [--] [WORKSPACE]
+rust-lsp-mcp [OPTIONS] [--] [WORKSPACE]
 ```
 
 - `WORKSPACE`: workspace root directory, defaults to the current directory.
@@ -92,9 +92,9 @@ Options:
 Examples:
 
 ```bash
-rust-dev-mcp /path/to/project
-rust-dev-mcp --features serde,tokio /path/to/project
-rust-dev-mcp --config check.command=clippy /path/to/project
+rust-lsp-mcp /path/to/project
+rust-lsp-mcp --features serde,tokio /path/to/project
+rust-lsp-mcp --config check.command=clippy /path/to/project
 ```
 
 ## MCP integration
@@ -104,66 +104,12 @@ The server runs over stdio and speaks MCP protocol version `2024-11-05`. In an M
 ```json
 {
   "mcpServers": {
-    "rust-dev-mcp": {
-      "command": "rust-dev-mcp",
+    "rust-lsp-mcp": {
+      "command": "rust-lsp-mcp",
       "args": ["/path/to/workspace"]
     }
   }
 }
-```
-
-## Tool examples
-
-`hover` — get documentation for a symbol:
-
-```json
-{ "file_path": "src/main.rs", "line": 0, "character": 4 }
-```
-
-`workspace_symbols` — find all types named `Config`:
-
-```json
-{ "query": "Config" }
-```
-
-`inlay_hints` — show inferred types for lines 10–20:
-
-```json
-{ "file_path": "src/lib.rs", "start_line": 10, "end_line": 20 }
-```
-
-`expand_macro` — expand the macro at a given position:
-
-```json
-{ "file_path": "src/main.rs", "line": 5, "character": 4 }
-```
-
-`rename` — rename a symbol across the workspace:
-
-```json
-{ "file_path": "src/lib.rs", "line": 42, "character": 10, "new_name": "new_identifier" }
-```
-
-`rename` returns `applied: false` with a list of `changes`. Apply them by calling `apply_edit` for each affected file:
-
-```json
-{
-  "file_path": "src/lib.rs",
-  "edits": [
-    {
-      "range": { "start": { "line": 42, "character": 4 }, "end": { "line": 42, "character": 14 } },
-      "newText": "new_identifier"
-    }
-  ]
-}
-```
-
-`apply_edit` sorts the edits automatically and applies them from the end of the file backwards, so byte offsets stay correct regardless of the order you pass them in.
-
-`write_file` — write (or overwrite) a file:
-
-```json
-{ "file_path": "src/lib.rs", "content": "fn main() {}\n" }
 ```
 
 ## How it works

@@ -1,12 +1,12 @@
 [package]
-name = "rust-dev-mcp"
+name = "rust-lsp-mcp"
 version = "0.1.0"
 edition = "2024"
 description = "MCP server for rust-analyzer integration"
 license = "MIT"
 
 [[bin]]
-name = "rust-dev-mcp"
+name = "rust-lsp-mcp"
 path = "src/main.rs"
 
 [dependencies]

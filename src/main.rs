@@ -1,5 +1,5 @@
 use anyhow::Result;
-use rust_dev_mcp::{
+use rust_lsp_mcp::{
     cli::{self, Action, USAGE},
     mcp::McpServer,
 };
@@ -13,7 +13,7 @@ fn main() -> Result<()> {
             return Ok(());
         }
         Action::Version => {
-            println!("rust-dev-mcp {}", env!("CARGO_PKG_VERSION"));
+            println!("rust-lsp-mcp {}", env!("CARGO_PKG_VERSION"));
             return Ok(());
         }
         Action::Serve { workspace, settings } => (workspace, settings),
